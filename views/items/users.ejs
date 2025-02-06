@@ -1,0 +1,26 @@
+<% layout("/layouts/commonPage.ejs") %>
+<div class="userContainer">
+  <div class="userContContent">
+    <div class="userScrollContainer">
+      <ul class="list-group userListContainer">
+        <% for(let user of users) {%>
+        <li
+          class="list-group-item d-flex justify-content-between align-items-center"
+        >
+            <div>
+                <a href="/users/<%= user._id %>" class="usersLink"><p><b><%= user.name %></b></p></a>
+                <p class="userEmail">Email : <%= user.email %></p>
+            </div>
+            <div class="usersContItem">
+          <span class="badge text-bg-primary rounded-pill"
+            >Item Losts : <%= user.lostitems.length %></span
+          >
+          <span class="badge text-bg-primary rounded-pill" >Item Found : <%= user.founditems.length %></span
+          >
+            </div>
+        </li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</div>
