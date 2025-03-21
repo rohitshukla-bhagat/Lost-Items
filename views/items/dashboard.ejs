@@ -1,0 +1,240 @@
+<% layout("/layouts/commonPage.ejs") %>
+<div class="dashboardContainer">
+  <div
+    id="liveToast"
+    class="toast position-absolute top-0 end-0 m-3"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+  >
+    <div class="toast-header">
+      <strong class="me-auto toastNoti">Notification</strong>
+      <small>Just now</small>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="toast"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="toast-body"></div>
+  </div>
+  <% if(path == "uncheck") {%>
+  <h4 style="margin-top: 1em">Details of <%= foundUser.name %> !</h4>
+  <%}else{%>
+  <h4 style="margin-top: 1em">
+    Hey <%= foundUser.name.split(" ")[0] %> ! Here is Your Details
+  </h4>
+  <%}%>
+  <div class="dashboardContent">
+    <div class="dashboardUserDetail">
+      <div>
+        <p>
+          <span class="fw-semibold">Username</span> : <%= foundUser.username %>
+        </p>
+        <p><span class="fw-semibold">Name</span> : <%= foundUser.name %></p>
+        <p><span class="fw-semibold">Email</span> : <%= foundUser.email %></p>
+      </div>
+      <div class="dashboardUserDetailItems">
+        <p>
+          <span class="fw-semibold">Total Lost Items</span> : <%=
+          foundUser.lostitems.length %>
+        </p>
+        <p>
+          <span class="fw-semibold">Total Found Items</span> : <%=
+          foundUser.founditems.length %>
+        </p>
+        <% if(path == "check") {%>
+        <p>
+          <span class="fw-semibold">Total Responces</span> : <%=
+          foundUser.responses.length %>
+        </p>
+        <%}%>
+      </div>
+    </div>
+    <% if(path == "check") {%>
+    <form action="/dashboard/profile" method="get">
+      <button class="editProfileBtn" type="submit">Edit Profile</button>
+    </form>
+    <%}%>
+    <div class="dashboardItemOptions">
+      <ul class="pagination pagination-lg dashboardItemsNav">
+        <li class="page-item active" aria-current="page">
+          <span class="page-link dashItemLink">Lost Items</span>
+        </li>
+        <% if(path == "uncheck") {%>
+        <li class="page-item">
+          <a
+            class="page-link"
+            href="/dashboard/found?path=uncheck&userid=<%= foundUser._id %>"
+            >Found Items</a
+          >
+        </li>
+        <%}else{%>
+        <li class="page-item">
+          <a
+            class="page-link"
+            href="/dashboard/found?path=check&userid=<%= foundUser._id %>"
+            >Found Items</a
+          >
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="/dashboard/response?path=check"
+            >Responses</a
+          >
+        </li>
+        <%}%>
+      </ul>
+    </div>
+  </div>
+  <div class="dashboardLostItems">
+    <% if(itemsArray.length == 0){%>
+    <h4>No Items Found !</h4>
+    <%}%> <% for(let item of itemsArray) {%>
+    <div class="card dashCard" style="width: 20rem">
+      <% if (item.image && item.image.data && item.image.contentType) { %>
+      <img
+        src="data:<%= item.image.contentType %>;base64,<%= item.image.data.toString('base64') %>"
+        alt="<%= item.name %>"
+      />
+      <% } else { %>
+      <p>No image available</p>
+      <% } %>
+      <div class="card-body">
+        <h5 class="card-title"><%= item.name %></h5>
+        <p class="card-text"><%= item.description %></p>
+        <% if(path == "check") {%> <% if(item.lost == true) {%>
+        <form
+          onsubmit="return openMarkAsFoundModal(event, '<%= item._id %>')"
+          method="post"
+        >
+          <button class="dashCardFoundBtn">Mark As Found</button>
+        </form>
+        <% } else if(item.lost == false){%>
+        <p style="color: green">Item Founded ✓</p>
+        <% } %> <%}%>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          <b>Date : </b><%= item.date.toString().slice( 0, 15) %>
+        </li>
+        <li class="list-group-item"><b>Location : </b><%= item.location %></li>
+        <li class="list-group-item"><b>Contact : </b><%= item.contact %></li>
+      </ul>
+      <div class="card-body dashCardBtn">
+        <div class="dashCardBtnMain">
+          <% if(path == "check") {%> <%if(item.lost == true){%>
+          <a
+            href="/item/<%= item._id %>/update"
+            class="card-link dashCardEditBtn"
+            >Edit</a
+          >
+          <%}%>
+          <a
+            href="/item/<%= item._id %>/delete"
+            class="card-link dashCardDeleteBtn"
+            >Delete</a
+          >
+          <%}else{%>
+          <a href="/item/<%= item._id %>" class="card-link allItemCardBtn"
+            >View</a
+          >
+          <%}%>
+        </div>
+      </div>
+    </div>
+    <%}%>
+  </div>
+</div>
+
+<!-- Bootstrap Modal For The Functionality for Mark As Found Form  -->
+<div
+  class="modal fade"
+  id="markAsFoundModal"
+  tabindex="-1"
+  aria-labelledby="markAsFoundLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="markAsFoundLabel">Confirm Mark As Found</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p>Please Enter the Receiver Username First !</p>
+        <form id="markAsFoundForm" action="" method="post">
+          <div class="mb-3">
+            <label for="username" class="form-label fw-semibold"
+              >Receiver Username</label
+            >
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Enter The Username"
+              class="form-control"
+              required
+            />
+            <div class="invalid-feedback formErrors">
+              Username Should Be Required !
+            </div>
+          </div>
+          <button type="submit" class="btn btn-success">
+            Yes, Mark as Found
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openMarkAsFoundModal(event, itemId) {
+    event.preventDefault(); // Prevents form from submitting immediately
+
+    // Set the correct form action dynamically
+    document.getElementById(
+      "markAsFoundForm"
+    ).action = `/found/record/${itemId}`;
+
+    // Show the modal
+    var modal = new bootstrap.Modal(
+      document.getElementById("markAsFoundModal")
+    );
+    modal.show();
+  }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const toastMessage = urlParams.get("toastMessage");
+
+  if (toastMessage) {
+    const toastEl = document.getElementById("liveToast");
+    toastEl.querySelector(".toast-body").textContent = toastMessage;
+
+    // Show toast
+    const toast = new bootstrap.Toast(toastEl);
+    toast.show();
+
+    // Remove the toastMessage from URL after showing
+    const newUrl =
+      window.location.pathname +
+      window.location.search.replace(/&?toastMessage=[^&]*/, "");
+    history.replaceState(null, "", newUrl);
+  }
+</script>

@@ -1,0 +1,90 @@
+<% layout("/layouts/commonPage.ejs") %>
+<div
+  id="liveToast"
+  class="toast position-absolute top-0 end-0 m-3"
+  role="alert"
+  aria-live="assertive"
+  aria-atomic="true"
+>
+  <div class="toast-header">
+    <strong class="me-auto toastNoti">Notification</strong>
+    <small>Just now</small>
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="toast"
+      aria-label="Close"
+    ></button>
+  </div>
+  <div class="toast-body"></div>
+</div>
+<div class="dashboardContainer">
+  <% if(itemArray.length == 0){%>
+  <h2 style="margin-top: 1em">No Related Items In Database !</h2>
+  <%}%>
+  <div class="searchContainer">
+    <form
+      class="d-flex searchInput"
+      role="search"
+      action="/search"
+      method="post"
+    >
+      <input
+        class="form-control me-2"
+        type="search"
+        placeholder="Search"
+        aria-label="Search"
+        name="search"
+      />
+      <button class="btn btn-outline-success searchBtn" type="submit">
+        Search
+      </button>
+    </form>
+  </div>
+  <div class="allItemsContainer">
+    <% for(let item of itemArray ) {%>
+    <div class="card allItemCard" style="width: 18rem">
+      <% if (item.image && item.image.data && item.image.contentType) { %>
+      <img
+        src="data:<%= item.image.contentType %>;base64,<%= item.image.data.toString('base64') %>"
+        alt="<%= item.name %>"
+      />
+      <% } else { %>
+      <p>No image available</p>
+      <% } %>
+      <div class="card-body allItemCardText">
+        <h5 class="card-title"><%= item.name %></h5>
+        <p class="card-text"><%= item.description %></p>
+        <p class="card-text">
+          <b>Uploaded</b> : <%= item.date.toString().slice(0 , 15) %>
+        </p>
+      </div>
+      <div class="card-body allItemCardBtnContainer">
+        <a href="/item/<%= item._id %>" class="card-link allItemCardBtn"
+          >View</a
+        >
+      </div>
+    </div>
+    <%}%>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const toastMessage = urlParams.get("toastMessage");
+
+    if (toastMessage) {
+      const toastEl = document.getElementById("liveToast");
+      toastEl.querySelector(".toast-body").textContent = toastMessage;
+
+      // Show toast
+      const toast = new bootstrap.Toast(toastEl);
+      toast.show();
+
+      // Remove the toastMessage from URL after showing
+      const newUrl =
+        window.location.pathname +
+        window.location.search.replace(/&?toastMessage=[^&]*/, "");
+      history.replaceState(null, "", newUrl);
+    }
+  </script>
+</div>

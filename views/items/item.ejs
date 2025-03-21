@@ -1,0 +1,41 @@
+<% layout("/layouts/commonPage.ejs") %>
+<div class="itemContainer">
+  <div class="card itemCard" style="width: 18rem">
+    <% if (foundItem.image && foundItem.image.data &&
+    foundItem.image.contentType) { %>
+    <img
+      src="data:<%= foundItem.image.contentType %>;base64,<%= foundItem.image.data.toString('base64') %>"
+      alt="<%= foundItem.name %>"
+    />
+    <% } else { %>
+    <p>No image available</p>
+    <% } %>
+    <div class="card-body">
+      <h5 class="card-title"><%= foundItem.name %></h5>
+      <p class="card-text"><%= foundItem.description %></p>
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        <b>Date Of Public :</b>
+        <%= foundItem.date.toString().slice( 0, 15) %>
+      </li>
+      <li class="list-group-item itemOwner">
+        <p><b>Owner Name :</b> <%= foundUser.name %></p>
+        <form action="/users/<%= foundUser._id %>">
+          <button type="submit">Profile</button>
+        </form>
+      </li>
+      <li class="list-group-item">
+        <b>Location : </b><%= foundItem.location %>
+      </li>
+      <li class="list-group-item">
+        <b>Contact Details : </b><%= foundItem.contact %>
+      </li>
+    </ul>
+    <div class="card-body">
+      <a href="/response/<%= foundItem.id %>" class="card-link itemBtn"
+        >Send Response</a
+      >
+    </div>
+  </div>
+</div>

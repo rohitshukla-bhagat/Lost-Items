@@ -1,0 +1,83 @@
+<% layout("/layouts/commonPage.ejs") %>
+<div class="dashboardContainer">
+  <h4 style="margin-top: 1em">Hey <%= foundUser.name.split(" ")[0] %> ! Here is Your Details</h4>
+  <div class="dashboardContent">
+    <div class="dashboardUserDetail">
+      <div>
+        <p>
+          <span class="fw-semibold">Username</span> : <%= foundUser.username %>
+        </p>
+        <p><span class="fw-semibold">Name</span> : <%= foundUser.name %></p>
+        <p><span class="fw-semibold">Email</span> : <%= foundUser.email %></p>
+      </div>
+      <div class="dashboardUserDetailItems">
+        <p>
+          <span class="fw-semibold">Total Lost Items</span> : <%=
+          foundUser.lostitems.length %>
+        </p>
+        <p>
+          <span class="fw-semibold">Total Found Items</span> : <%=
+          foundUser.founditems.length %>
+        </p>
+        <p>
+          <span class="fw-semibold">Total Responces</span> : <%=
+          foundUser.responses.length %>
+        </p>
+      </div>
+    </div>
+    <% if(path == "check") {%>
+    <form action="/dashboard/profile" method="get">
+      <button class="editProfileBtn" type="submit">Edit Profile</button>
+    </form>
+    <%}%>
+    <div class="dashboardItemOptions">
+      <ul class="pagination pagination-lg dashboardItemsNav">
+        <li class="page-item">
+          <a class="page-link" href="/dashboard?&path=check">Lost Items</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="/dashboard/found?&path=check"
+            >Found Items</a
+          >
+        </li>
+        <li class="page-item active" aria-current="page">
+          <span class="page-link dashItemLink">Responses</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="dashboardLostItems">
+    <% if(itemsArray.length == 0){%>
+    <h4>No Items Found !</h4>
+    <%}%> <% for(let item of itemsArray) {%>
+    <div class="card dashCard" style="width: 18rem">
+      <% if (item.image && item.image.data && item.image.contentType) { %>
+      <img
+        src="data:<%= item.image.contentType %>;base64,<%= item.image.data.toString('base64') %>"
+        alt="<%= item.name %>"
+      />
+      <% } else { %>
+      <p>No image available</p>
+      <% } %>
+      <div class="card-body">
+        <h5 class="card-title"><b>Name : </b><%= item.name %></h5>
+        <p class="card-text"><%= item.description %></p>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          <b>Date : </b><%= item.date.toString().slice( 0, 15) %>
+        </li>
+        <li class="list-group-item"><b>Location : </b><%= item.location %></li>
+        <li class="list-group-item"><b>Contact : </b><%= item.contact %></li>
+      </ul>
+      <div class="card-body dashCardBtn">
+        <a
+          href="/item/<%= item._id %>/delete"
+          class="card-link dashCardDeleteBtn"
+          >Delete</a
+        >
+      </div>
+    </div>
+    <%}%>
+  </div>
+</div>

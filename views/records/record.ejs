@@ -1,0 +1,39 @@
+<% layout("/layouts/commonPage.ejs") %>
+<div class="records">
+  <% for ( let record of recordsArray ){%>
+  <div class="record">
+    <% if(record.status == "response") {%>
+    <div class="card" style="width: 18rem">
+      <% if (record.image && record.image.data && record.image.contentType) { %>
+      <img
+        src="data:<%= record.image.contentType %>;base64,<%= record.image.data.toString('base64') %>"
+        alt="<%= record.name %>"
+      />
+      <%}%>
+      <div class="card-body">
+        <p class="card-text">
+          <b><%= record.senderUsername %></b> is send the response to
+          <b><%= record.ownerUsername %></b> for this item on <%=
+          record.date.toString().slice(0 , 15) %>.
+        </p>
+      </div>
+    </div>
+    <%} else if( record.status == "found" ){%>
+    <div class="card" style="width: 18rem">
+      <% if (record.image && record.image.data && record.image.contentType) { %>
+      <img
+        src="data:<%= record.image.contentType %>;base64,<%= record.image.data.toString('base64') %>"
+        alt="<%= record.name %>"
+      />
+      <%}%>
+      <div class="card-body">
+        <p class="card-text">
+          <b><%= record.ownerUsername %></b> is found this item on <%=
+          record.date.toString().slice(0 , 15) %>.
+        </p>
+      </div>
+    </div>
+    <%}%>
+  </div>
+  <%}%>
+</div>

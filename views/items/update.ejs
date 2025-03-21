@@ -1,0 +1,90 @@
+<% layout("/layouts/commonPage.ejs") %>
+<div class="uploadItemContainer">
+  <div class="formContainer">
+    <h4>Edit Item Details</h4>
+    <form action="/update/<%= foundItem._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+      <div class="mb-3">
+        <label for="title" class="form-label fw-semibold">Title</label>
+        <input
+          type="text"
+          name="item[title]"
+          placeholder="Enter The Title"
+          class="form-control"
+          value="<%= foundItem.name %>"
+          required
+        />
+        <div class="invalid-feedback formErrors">
+          Title Should Be Required !
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="description" class="form-label fw-semibold"
+          >Description</label
+        >
+        <textarea
+          name="item[description]"
+          id="des"
+          placeholder="Enter The Description"
+          class="form-control"
+          required
+        ><%= foundItem.description %></textarea>
+        <div class="invalid-feedback formErrors">
+          Description Should Be Required !
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="date" class="form-label fw-semibold">Date</label>
+        <input
+          type="date"
+          name="item[date]"
+          placeholder="Enter The date"
+          class="form-control"
+          value="<%= foundItem.date.toISOString().slice(0 , 10) %>"
+          accept="image/*"
+          required
+        />
+        <div class="invalid-feedback formErrors">Date Should Be Required !</div>
+      </div>
+      <div class="mb-3">
+        <label for="image" class="form-label fw-semibold"
+          >Image</label
+        >
+        <input type="file" name="image" class="form-control" required />
+        <div class="invalid-feedback formErrors">
+          Image Should Be Required !
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="location" class="form-label fw-semibold">Location</label>
+        <input
+          type="text"
+          name="item[location]"
+          placeholder="Enter The Location"
+          class="form-control"
+          value="<%= foundItem.location %>"
+          required
+        />
+        <div class="invalid-feedback formErrors">
+          Location Should Be Required !
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="number" class="form-label fw-semibold"
+          >Contact Number</label
+        >
+        <input
+          type="number"
+          name="item[number]"
+          placeholder="Enter The Number"
+          class="form-control"
+          value="<%= foundItem.contact %>"
+          required
+        />
+        <div class="invalid-feedback formErrors">
+          Location Should Be Required !
+        </div>
+      </div>
+      <button class="uploadItemAddBtn">Update</button>
+    </form>
+  </div>
+</div>
